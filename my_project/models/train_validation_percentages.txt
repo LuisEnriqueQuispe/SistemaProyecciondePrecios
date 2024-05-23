@@ -1,0 +1,2 @@
+Train Percent: 80.0
+Validation Percent: 20.0

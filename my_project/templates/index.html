@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction App</title>
+</head>
+<body>
+    <h1>Predict Sale Price</h1>
+    <form action="/predict" method="post">
+        <label for="model">Choose a model:</label>
+        <select id="model" name="model">
+            <option value="knn">KNN</option>
+            <option value="log_reg">Logistic Regression</option>
+            <option value="nn">Neural Network</option>
+        </select>
+        <br>
+        <label for="product">Choose a product:</label>
+        <select id="product" name="product">
+            {% for product in products %}
+            <option value="{{ product }}">{{ product }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="year">Target Year:</label>
+        <input type="text" id="year" name="year">
+        <br>
+        <input type="submit" value="Predict">
+    </form>
+    <div id="result"></div>
+    <h2>Training and Validation Percentages</h2>
+    <p>Training Data: <span id="train_percent"></span>%</p>
+    <p>Validation Data: <span id="validation_percent"></span>%</p>
+    <img id="validation_graph" src="{{ url_for('static', filename='validation_percentage.png') }}" alt="Validation Percentage" style="display: none;">
+    <script>
+        document.querySelector('form').onsubmit = async function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const response = await fetch(form.action, {
+                method: form.method,
+                body: new FormData(form)
+            });
+            const result = await response.json();
+            document.getElementById('result').innerText = 'Predicted Sale Price: ' + result.prediction;
+            document.getElementById('train_percent').innerText = result.train_percent.toFixed(2);
+            document.getElementById('validation_percent').innerText= result.validation_percent.toFixed(2);
+            document.getElementById('validation_graph').style.display = 'block';
+        };
+    </script>
+</body>
+</html>
